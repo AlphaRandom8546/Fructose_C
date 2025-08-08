@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>果糖含量</title>
+    <link rel="icon" type="image/png" href="https://i0.hdslb.com/bfs/face/59e909b2a7065fab52a354c7c20707c67c0d22a4.jpg@240w_240h_1c_1s_!web-avatar-search-videos.webp">
+
+    <style>
+        /* 引入在线字体库 */
+        @font-face {
+            font-family: 苹方简;
+            src: url(./font.ttf);
+        }
+
+        * {
+            font-family: 苹方简;
+            cursor: none;
+        }
+        
+        html,
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .slideshow-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            object-fit: cover;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover; /* 修改为 cover 以填满容器并保持比例 */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #000; /* 添加背景色填充空白部分（可选） */
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .image-title {
+            font-weight: bold;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            padding: 6px 10px;
+            background-color: black;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 1px 1px 5px -1px black;
+            transition: opacity 0.5s ease, box-shadow 0.3s ease;
+            filter: invert(10%);
+            mix-blend-mode: difference;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .image-title:hover {
+            box-shadow: 1px 1px 5px 2px black;
+        }
+        
+        .image-title.hidden {
+            opacity: 0;
+        }
+
+        .image-title .title-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px white;
+            transition: opacity 0.5s ease;
+        }
+
+        .dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            filter: blur(2px) invert(78%);
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: 
+                transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                top 0.3s ease,
+                left 0.3s ease,
+                width 0.3s ease,
+                height 0.3s ease,
+                filter 0.3s ease;
+            will-change: transform;
+            z-index: 10;
+        }
+        
+        .dot.active {
+            width: 20px;
+            height: 20px;
+            top: -10px;
+            left: -10px;
+            filter: blur(1px) invert(85%);
+        }
+        
+        .dot:hover {
+            transform: translate(-50%, -50%) rotate(180deg);
+        }
+
+        button {
+            padding: 3px 12px;
+            width: 150px;
+            height: 35px;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: rgba(255,255,255,.3);
+            color: white;
+            box-shadow: 1px 1px 4px 2px black;
+            transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+        }
+        button:hover {
+            color: black;
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .download-a {
+            font-size: 1.2rem;
+        }
+
+        .animated-hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #ffffff, #000000);
+            animation: hr-animation 10s ease infinite;
+            background-size: 200% auto;
+            margin: 10px 0;
+        }
+
+        @keyframes hr-animation {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .image-title .aHHide {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 11.5px;
+            font-weight: normal;
+            margin: 2px auto;
+            transition: color 0.1s ease-in-out;
+        }
+        .aHHide:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+        .image-title .nextPage {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 11.5px;
+            font-weight: normal;
+            margin: 2px auto;
+            transition: color 0.1s ease-in-out;
+        }
+        .nextPage:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+    </style>
+</head>
+
+<body oncontextmenu="return false" onselectstart="return false">
+    <div class="slideshow-container">
+    </div>
+    
+    <div class="image-title">
+        <span class="title-text"></span>
+        <hr class="animated-hr">
+        <button><a class="download-a" id="openLinkBtn">Download</a></button>
+        <button><a class="download-a" id="downloadBtn">e926.net</a></button>
+        <!-- <button class="download-btn">Download</button> --><br>
+        <span class="aHHide" id="aHHide">按H键以隐藏</span>  <span class="nextPage" id="nextPage">按空格下一页</span>
+    </div>
+    
+    <div class="dot"></div>
+    
+    <script>
+        // 图片数据
+        const images = [
+            { 
+                url: "https://static1.e926.net/data/2b/c3/2bc3fe99c64c339b148df23992bdc64f.jpg",
+                title: "“想见你只想见你，未来过去我只想见你”",
+                link: "https://e926.net/posts/5019099"
+            },
+            { 
+                url: "https://static1.e926.net/data/cd/28/cd287ce1244d88b1bc17695be62276f0.jpg",
+                title: "“今昔须臾之梦”",
+                link: "https://e926.net/posts/5549630"
+            },
+            { 
+                url: "https://static1.e926.net/data/1b/03/1b03f526de07ee1d3282c9ce7ecf745c.jpg",
+                title: "“好结局”",
+                link: "https://e926.net/posts/5674955"
+            },
+            {
+                url: "https://static1.e926.net/data/95/3c/953c88ce187aa37ce321b9da9a3101e7.jpg",
+                title: "“好结局”",
+                link: "https://e926.net/posts/5674930"
+            },
+            { 
+                url: "https://static1.e926.net/data/78/a9/78a91bd2cb6f5fe42a9afe7a5df04d9e.jpg",
+                title: "“坏结局”",
+                link: "https://e926.net/posts/5674952"
+            },
+            { 
+                url: "https://static1.e926.net/data/80/5e/805e74a773c92519d11583812b66f24c.jpg",
+                title: "“不管在哪个平行宇宙，果糖也从来没学会如何飞翔”",
+                link: "https://e926.net/posts/5670139"
+            },
+            {
+                url: "https://static1.e926.net/data/1c/c9/1cc93d157e8e0b573c185124d01c0c19.jpg",
+                title: "“果糖含量”",
+                link: "https://e926.net/posts/4076400"
+            },
+            {
+                url: "https://static1.e926.net/data/b4/84/b4847170889c59518a1d2861856ef2e5.jpg",
+                title: "“如果有人在亿万颗星星中，爱上一颗星星上面独一无二的那株花，他只要望一眼星空，就会觉得很幸福”",
+                link: "https://e926.net/posts/5627665"
+            },
+            {
+                url: "https://static1.e926.net/data/8f/a1/8fa1f30f6cbe9d5f453ab7dc69093995.jpg",
+                title: "“果糖含量对伊布使用了钢尾，效果拔群！！！（大雾）”",
+                link: "https://e926.net/posts/5496660"
+            }
+        ];
+        
+        // 初始化
+        let currentIndex = 0;
+        const slideshowContainer = document.querySelector('.slideshow-container');
+        const titleElement = document.querySelector('.title-text');
+        const openLinkBtn = document.getElementById('openLinkBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const dot = document.querySelector('.dot');
+        const hide = document.getElementById('aHHide');
+        const next = document.getElementById('nextPage');
+        let titleVisible = true;
+        
+        // 轮播
+        function initSlideshow() {
+            images.forEach((image, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.style.backgroundImage = `url(${image.url})`;
+                if (index === 0) {
+                    slide.classList.add('active');
+                    titleElement.textContent = image.title;
+                }
+                slideshowContainer.appendChild(slide);
+            });
+        }
+        
+        // 下一张图片
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            slides[currentIndex].classList.remove('active');
+            
+            currentIndex = (currentIndex + 1) % images.length;
+            
+            slides[currentIndex].classList.add('active');
+            titleElement.textContent = images[currentIndex].title;
+        }
+        
+        // 标题显示&隐藏
+        function toggleTitle() {
+            titleVisible = !titleVisible;
+            if (titleVisible) {
+                titleElement.parentElement.classList.remove('hidden');
+            } else {
+                titleElement.parentElement.classList.add('hidden');
+            }
+        }
+        
+        // 下载当前图片
+        function downloadImage() {
+            const downloadImage = images[currentIndex];
+            if (downloadImage.url) {
+                window.open(downloadImage.url, '_blank');
+            }
+        }
+        
+        // 打开当前图片链接
+        function openCurrentLink() {
+            const currentImage = images[currentIndex];
+            if (currentImage.link) {
+                window.open(currentImage.link, '_blank');
+            }
+        }
+        
+        // 控制点
+        function moveDot(e) {
+            requestAnimationFrame(() => {
+                dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px) rotate(0deg)`;
+            });
+        }
+        
+        // 按下
+        function handleMouseDown() {
+            dot.classList.add('active');
+            // nextSlide();
+        }
+        
+        // 松开
+        function handleMouseUp() {
+            dot.classList.remove('active');
+        }
+        
+        // 键盘事件
+        function handleKeyDown(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.code === 'KeyH') {
+                toggleTitle();
+            } else if (e.code === 'KeyO') {
+                openCurrentLink();
+            } else if (e.code === 'KeyD') {
+                downloadImage();
+            }
+        }
+        
+        initSlideshow();
+        
+        // 事件监听
+        document.addEventListener('mousemove', moveDot);
+        document.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mouseleave', handleMouseUp);
+        document.addEventListener('keydown', handleKeyDown);
+        openLinkBtn.addEventListener('click', openCurrentLink);
+        downloadBtn.addEventListener('click', downloadImage);
+        hide.addEventListener('click', toggleTitle);
+        next.addEventListener('click', nextSlide);
+        
+
+        window.addEventListener('load', () => {
+            moveDot({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+        });
+    </script>
+</body>
+
+</html>
